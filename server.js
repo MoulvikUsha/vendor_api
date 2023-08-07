@@ -4,6 +4,8 @@ const app = express()
 const cors = require('cors')
 const port = 3000;
 
+const jwt = require('jsonwebtoken');
+const router = express.Router();
 
 require('dotenv').config()
 require('./config/db')
@@ -16,7 +18,7 @@ app.use(bodyParser.json())
 
 // routes
 const product = require('./routes/products')
-const cart = require('./routes/cart')
+const cart = require('./routes/cart');
 app.use('/products', product)
 app.use('/cart', cart)
 
@@ -26,6 +28,14 @@ app.get('/', (req, res) => {
         path: '/'
     });
 });
+
+
+app.post('/login', (req, res) => {
+    let userData = req.body;
+    let payload = { subject: userData.userName};
+    let token = jwt.sign(payload, 'secretKey');
+    res.status(200).json({token});
+})
 
 
 app.listen(port, () => {
